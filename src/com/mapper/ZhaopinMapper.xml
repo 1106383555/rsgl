@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.ZhaopinMapper">
+    <sql id="Where_Clause" >
+        <where>
+            <if test="id!=null and id!=0">
+                and id= #{id}
+            </if>
+                                                                        <if test="name!=null and name!=''">
+                            and name=#{name}
+                        </if>
+                                                        </where>
+    </sql>
+        	<select id="query" parameterType="java.util.Map" resultType="Zhaopin">
+		select * from zhaopin  
+		<include refid="Where_Clause" />
+        <if test="page">
+            limit #{offset} ,#{pageSize}
+        </if>
+	</select>
+    <select id="getCount" parameterType="java.util.Map" resultType="Int">
+        select count(0) from zhaopin
+        <include refid="Where_Clause" />
+    </select>
+	<select id="queryZhaopinById" parameterType="int" resultType="Zhaopin">
+		select * from zhaopin where id=${value}
+	</select>
+	<insert id="insertZhaopin" useGeneratedKeys="true" keyProperty="id" parameterType="Zhaopin">
+		insert into zhaopin
+		(name,contents,fbsj)
+		values
+		(#{name},#{contents},#{fbsj});
+	</insert>
+	<update id="updateZhaopin" parameterType="Zhaopin" >
+		update zhaopin set
+		name=#{name},contents=#{contents},fbsj=#{fbsj}
+		where
+		id=#{id}	
+	</update>
+	<delete id="deleteZhaopin" parameterType="int">
+	    delete from  zhaopin where id=${value}
+	</delete>
+</mapper>
+ 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BumenMapper">
+	<sql id="Where_Clause">
+		<where>
+			<if test="id!=null and id!=0">and id= #{id}</if>
+			<if test="name!=null and name!=''">and name=#{name}</if>
+		</where>
+	</sql>
+	<select id="query" parameterType="java.util.Map"
+		resultType="Bumen">
+		select * from bumen
+		<include refid="Where_Clause" />
+		<if test="page">limit #{offset} ,#{pageSize}</if>
+	</select>
+	<select id="getCount" parameterType="java.util.Map"
+		resultType="Int">
+		select count(0) from bumen
+		<include refid="Where_Clause" />
+	</select>
+	<select id="queryBumenById" parameterType="int"
+		resultType="Bumen">
+		select * from bumen where id=${value}
+	</select>
+	<insert id="insertBumen" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Bumen">
+		insert into bumen (name) values (#{name});
+	</insert>
+	<update id="updateBumen" parameterType="Bumen">
+		update bumen set name=#{name} where id=#{id}
+	</update>
+	<delete id="deleteBumen" parameterType="int">
+		delete from bumen where id=${value}
+	</delete>
+</mapper>

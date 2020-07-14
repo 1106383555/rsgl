@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.NewsinfoMapper">
+    <sql id="Where_Clause" >
+        <where>
+            <if test="id!=null and id!=0">
+                and id= #{id}
+            </if>
+                                                                        <if test="title!=null and title!=''">
+                            and title=#{title}
+                        </if>
+                                                        </where>
+    </sql>
+        	<select id="query" parameterType="java.util.Map" resultType="Newsinfo">
+		select * from newsinfo  
+		<include refid="Where_Clause" />
+        <if test="page">
+            limit #{offset} ,#{pageSize}
+        </if>
+	</select>
+    <select id="getCount" parameterType="java.util.Map" resultType="Int">
+        select count(0) from newsinfo
+        <include refid="Where_Clause" />
+    </select>
+	<select id="queryNewsinfoById" parameterType="int" resultType="Newsinfo">
+		select * from newsinfo where id=${value}
+	</select>
+	<insert id="insertNewsinfo" useGeneratedKeys="true" keyProperty="id" parameterType="Newsinfo">
+		insert into newsinfo
+		(title,contents,fbsj)
+		values
+		(#{title},#{contents},#{fbsj});
+	</insert>
+	<update id="updateNewsinfo" parameterType="Newsinfo" >
+		update newsinfo set
+		title=#{title},contents=#{contents},fbsj=#{fbsj}
+		where
+		id=#{id}	
+	</update>
+	<delete id="deleteNewsinfo" parameterType="int">
+	    delete from  newsinfo where id=${value}
+	</delete>
+</mapper>
+ 

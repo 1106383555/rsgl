@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.YuangongMapper">
+	<resultMap type="Yuangong" id="queryMap">
+		<id property="id" column="id" />
+		<result property="yno" column="yno" />
+		<result property="name" column="name" />
+		<result property="csrq" column="csrq" />
+		<result property="tel" column="tel" />
+		<result property="pwd" column="pwd" />
+		<result property="bid" column="bid" />
+		<result property="cdate" column="cdate" />
+		<result property="fujian" column="fujian" />
+		<result property="roles" column="roles" />
+		<result property="state" column="state" />
+		<association property="bumenVO" javaType="Bumen">
+			<id property="id" column="id" />
+			<result property="name" column="b_name" />
+		</association>
+	</resultMap>
+	<sql id="Where_Clause">
+		<where>
+			<if test="id!=null and id!=0">and a.id= #{id}</if>
+			<if test="yno!=null and yno!=''">and a.yno=#{yno}</if>
+			<if test="name!=null and name!=''">and a.name=#{name}</if>
+			<if test="pwd!=null and pwd!=''">and a.pwd=#{pwd}</if>
+			<if test="bid!=null and bid!=0">and a.bid= #{bid}</if>
+			<if test="state!=null and state!=''">and a.state=#{state}</if>
+			
+			<if test="qtype=='员工'">and (a.roles='领导' or a.id=#{qid})</if>
+			
+			
+		</where>
+	</sql>
+	<select id="query" parameterType="java.util.Map"
+		resultMap="queryMap">
+		select a.*,b.name b_name from yuangong a left join bumen b on
+		a.bid=b.id
+		<include refid="Where_Clause" />
+		<if test="page">limit #{offset} ,#{pageSize}</if>
+	</select>
+	<!-- 查询申请的人数 -->
+	<select id="selectshen" parameterType="java.util.Map" resultMap="queryMap">
+		select a.*,b.name b_name from yuangong a left join bumen b on
+		a.bid=b.id where a.state=#{state}
+	</select>
+	<!-- 根据部门查询申请的人数 -->
+	<select id="selectshenbybid" parameterType="java.util.Map" resultMap="queryMap">
+		select a.*,b.name b_name from yuangong a left join bumen b on
+		a.bid=b.id where a.state=#{state} and a.bid=#{bid}
+	</select>
+	
+	
+	
+	<select id="getCount" parameterType="java.util.Map"
+		resultType="Int">
+		select count(*) nums from yuangong a left join bumen b on
+		a.bid=b.id
+		<include refid="Where_Clause" />
+	</select>
+	<select id="queryYuangongById" parameterType="int"
+		resultType="Yuangong">
+		select * from yuangong where id=${value}
+	</select>
+	<insert id="insertYuangong" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Yuangong">
+		insert into yuangong (yno,name,csrq,tel,pwd,bid,roles,state,fujian,cdate) values
+		(#{yno},#{name},#{csrq},#{tel},#{pwd},#{bid},#{roles},#{state},#{fujian},#{cdate});
+	</insert>
+	<update id="updateYuangong" parameterType="Yuangong">
+		update yuangong set
+		yno=#{yno},name=#{name},csrq=#{csrq},tel=#{tel},pwd=#{pwd},bid=#{bid},roles=#{roles},state=#{state},fujian=#{fujian},cdate=#{cdate}
+		where id=#{id}
+	</update>
+	<delete id="deleteYuangong" parameterType="int">
+		delete from yuangong where id=${value}
+	</delete>
+</mapper>
